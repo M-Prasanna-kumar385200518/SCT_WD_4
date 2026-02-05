@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task 02 - Stopwatch Web Application</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:18px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    transition:0.4s;
+    z-index:1000;
+}
+
+nav.scrolled{
+    background:linear-gradient(90deg,#ff512f,#dd2476);
+}
+
+.logo{
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+/* MAIN */
+.section{
+    min-height:100vh;
+    padding:140px 80px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.content{
+    max-width:600px;
+}
+
+.tag{
+    display:inline-block;
+    padding:8px 25px;
+    border-radius:30px;
+    border:2px solid #ff4ecd;
+    color:#ff4ecd;
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+h1{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+h1 span{
+    background:linear-gradient(90deg,#00f2fe,#ff4ecd);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+p{
+    font-size:18px;
+    opacity:0.9;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+/* STOPWATCH CARD */
+.stopwatch{
+    background:rgba(255,255,255,0.08);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 0 40px rgba(0,0,0,0.4);
+    text-align:center;
+    width:360px;
+}
+
+.time{
+    font-size:42px;
+    letter-spacing:2px;
+    margin-bottom:25px;
+}
+
+.controls button{
+    padding:12px 22px;
+    margin:8px;
+    border:none;
+    border-radius:30px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.start{background:#00f2fe;}
+.pause{background:#ff4ecd;}
+.reset{background:#ff512f;}
+.lap{background:#4facfe;}
+
+.controls button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 20px rgba(255,255,255,0.4);
+}
+
+.laps{
+    margin-top:20px;
+    max-height:150px;
+    overflow-y:auto;
+    text-align:left;
+}
+
+.laps li{
+    list-style:none;
+    padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    font-size:14px;
+}
+
+/* DECOR */
+.circle{
+    width:380px;
+    height:380px;
+    border-radius:50%;
+    background:radial-gradient(circle,#00f2fe,#6a11cb);
+    filter:blur(40px);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .section{
+        flex-direction:column;
+        text-align:center;
+    }
+    .circle{
+        margin-top:40px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+    <div class="logo">SkillCraft</div>
+</nav>
+
+<div class="section">
+    <div class="content">
+        <h1>Stopwatch <span>Web Application</span></h1>
+        <p>
+            Interactive and user-friendly stopwatch with start, pause, reset,
+            and lap time tracking to accurately measure and record time intervals.
+        </p>
+    </div>
+
+    <div class="stopwatch">
+        <div class="time" id="display">00:00:00</div>
+
+        <div class="controls">
+            <button class="start" onclick="start()">Start</button>
+            <button class="pause" onclick="pause()">Pause</button>
+            <button class="reset" onclick="reset()">Reset</button>
+            <button class="lap" onclick="lap()">Lap</button>
+        </div>
+
+        <ul class="laps" id="laps"></ul>
+    </div>
+</div>
+
+<div class="circle"></div>
+
+<script>
+const navbar = document.getElementById("navbar");
+
+window.addEventListener("scroll",()=>{
+    navbar.classList.toggle("scrolled", window.scrollY > 50);
+});
+
+let timer;
+let seconds = 0;
+let running = false;
+
+function formatTime(sec){
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = sec % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function start(){
+    if(!running){
+        running = true;
+        timer = setInterval(()=>{
+            seconds++;
+            document.getElementById("display").innerText = formatTime(seconds);
+        },1000);
+    }
+}
+
+function pause(){
+    running = false;
+    clearInterval(timer);
+}
+
+function reset(){
+    pause();
+    seconds = 0;
+    document.getElementById("display").innerText = "00:00:00";
+    document.getElementById("laps").innerHTML = "";
+}
+
+function lap(){
+    if(running){
+        const li = document.createElement("li");
+        li.innerText = `Lap ${document.getElementById("laps").children.length + 1} — ${formatTime(seconds)}`;
+        document.getElementById("laps").appendChild(li);
+    }
+}
+</script>
+
+</body>
+</html>
