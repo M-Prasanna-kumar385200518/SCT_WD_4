@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Landing Page</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:18px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(10px);
+    transition:0.4s;
+    z-index:1000;
+}
+
+nav.scrolled{
+    background:linear-gradient(90deg,#ff512f,#dd2476);
+}
+
+.logo{
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.menu a{
+    margin-left:30px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    cursor:pointer;
+    position:relative;
+    transition:0.3s;
+}
+
+.menu a::after{
+    content:'';
+    position:absolute;
+    width:0;
+    height:3px;
+    background:#00f2fe;
+    left:0;
+    bottom:-6px;
+    transition:0.3s;
+}
+
+.menu a:hover{
+    color:#00f2fe;
+}
+
+.menu a:hover::after{
+    width:100%;
+}
+
+/* SECTIONS */
+.section{
+    display:none;
+    min-height:100vh;
+    padding:140px 80px;
+    animation:fade 0.6s ease;
+}
+
+.section.active{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+@keyframes fade{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.content{
+    max-width:600px;
+}
+
+.tag{
+    display:inline-block;
+    padding:8px 25px;
+    border-radius:30px;
+    border:2px solid #ff4ecd;
+    color:#ff4ecd;
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+h1{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+h1 span{
+    background:linear-gradient(90deg,#00f2fe,#ff4ecd);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+p{
+    font-size:18px;
+    opacity:0.9;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+.btn{
+    padding:14px 40px;
+    border:none;
+    border-radius:40px;
+    background:linear-gradient(90deg,#00f2fe,#4facfe);
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 25px #00f2fe;
+}
+
+/* DECOR */
+.circle{
+    width:380px;
+    height:380px;
+    border-radius:50%;
+    background:radial-gradient(circle,#ff4ecd,#6a11cb);
+    filter:blur(35px);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .section.active{
+        flex-direction:column;
+        text-align:center;
+    }
+    .circle{
+        margin-top:40px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav id="navbar">
+    <div class="logo">SkillCraft</div>
+    <div class="menu">
+        <a onclick="showSection('home')">Home</a>
+        <a onclick="showSection('about')">About</a>
+        <a onclick="showSection('services')">Services</a>
+        <a onclick="showSection('contact')">Contact</a>
+    </div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="section active">
+    <div class="content">
+        <h1>Responsive <span>Landing Page</span></h1>
+        <p>
+            Interactive navigation menu with scroll effects, hover animations,
+            fixed position and modern UI design.
+        </p>
+        <button class="btn">Explore</button>
+    </div>
+    <div class="circle"></div>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="section">
+    <div class="content">
+        <div class="tag">ABOUT US</div>
+        <h1>Who <span>We Are</span></h1>
+        <p>
+            We create visually stunning, responsive, and user-friendly web
+            applications using modern technologies and creative design.
+        </p>
+        <button class="btn">Know More</button>
+    </div>
+    <div class="circle"></div>
+</div>
+
+<!-- SERVICES -->
+<div id="services" class="section">
+    <div class="content">
+        <div class="tag">SERVICES</div>
+        <h1>What <span>We Offer</span></h1>
+        <p>
+            ✔ Web Development <br>
+            ✔ UI/UX Design <br>
+            ✔ Frontend Animations <br>
+            ✔ Responsive Websites
+        </p>
+        <button class="btn">View Plans</button>
+    </div>
+    <div class="circle"></div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="section">
+    <div class="content">
+        <div class="tag">CONTACT</div>
+        <h1>Get <span>In Touch</span></h1>
+        <p>
+            📧 Email: skillcraft@gmail.com <br>
+            📞 Phone: +91 98765 43210 <br>
+            🌍 Location: India
+        </p>
+        <button class="btn">Send Message</button>
+    </div>
+    <div class="circle"></div>
+</div>
+
+<script>
+const navbar = document.getElementById("navbar");
+const sections = document.querySelectorAll(".section");
+
+window.addEventListener("scroll",()=>{
+    if(window.scrollY > 50){
+        navbar.classList.add("scrolled");
+    }else{
+        navbar.classList.remove("scrolled");
+    }
+});
+
+function showSection(id){
+    sections.forEach(section => section.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
