@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SkillCraft Quiz Game</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;
+    min-height:100vh;
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:15px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(12px);
+    z-index:1000;
+}
+
+nav h2{
+    letter-spacing:1px;
+}
+
+nav a{
+    margin-left:22px;
+    text-decoration:none;
+    color:#fff;
+    font-weight:500;
+    transition:0.3s;
+}
+
+nav a:hover{
+    color:#ff4ecd;
+}
+
+/* CONTENT */
+main{
+    padding-top:120px;
+    display:flex;
+    justify-content:center;
+}
+
+.container{
+    width:90%;
+    max-width:650px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(16px);
+    border-radius:25px;
+    padding:35px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.35);
+    animation:fade 0.6s ease;
+}
+
+h1,h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+p{
+    text-align:center;
+    line-height:1.7;
+}
+
+button{
+    display:block;
+    margin:20px auto;
+    padding:14px 38px;
+    border:none;
+    border-radius:40px;
+    background:linear-gradient(45deg,#ff4ecd,#7f5cff);
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+button:hover{
+    transform:scale(1.08);
+    box-shadow:0 15px 30px rgba(0,0,0,0.4);
+}
+
+.options label{
+    display:block;
+    padding:10px;
+    margin:8px 0;
+    background:rgba(255,255,255,0.2);
+    border-radius:12px;
+    cursor:pointer;
+}
+
+input[type="text"]{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    outline:none;
+    margin-top:15px;
+}
+
+.score{
+    font-size:30px;
+    color:#ffe600;
+    text-align:center;
+    margin-top:20px;
+}
+
+@keyframes fade{
+    from{opacity:0; transform:scale(0.9);}
+    to{opacity:1; transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>SkillCraft Quiz</h2>
+    <div>
+        <a onclick="loadPage('home')">Home</a>
+        <a onclick="loadPage('about')">About</a>
+        <a onclick="loadPage('rewards')">Rewards</a>
+        <a onclick="loadPage('contact')">Contact</a>
+        <a onclick="startQuiz()">Quiz</a>
+    </div>
+</nav>
+
+<main>
+    <div class="container" id="app"></div>
+</main>
+
+<script>
+const app = document.getElementById("app");
+let score=0, index=0;
+
+const quiz = [
+    {
+        type:"single",
+        q:"Which language styles web pages?",
+        options:["HTML","CSS","Python"],
+        ans:"CSS"
+    },
+    {
+        type:"multi",
+        q:"Select JavaScript frameworks:",
+        options:["React","Vue","Flask"],
+        ans:["React","Vue"]
+    },
+    {
+        type:"fill",
+        q:"_____ manipulation updates web pages dynamically.",
+        ans:"DOM"
+    }
+];
+
+/* PAGE ROUTER */
+function loadPage(page){
+    if(page==="home"){
+        app.innerHTML=`
+            <h1>🎯 Quiz Game</h1>
+            <p>Colorful, dynamic & interactive quiz platform</p>
+            <button onclick="startQuiz()">Start Quiz</button>
+        `;
+    }
+
+    if(page==="about"){
+        app.innerHTML=`
+            <h2>About</h2>
+            <p>This quiz app helps practice DOM manipulation,
+            event handling and JavaScript logic.</p>
+        `;
+    }
+
+    if(page==="rewards"){
+        app.innerHTML=`
+            <h2>Rewards</h2>
+            <p>✔ Correct Answer : +1</p>
+            <p>❌ Wrong Answer : -1</p>
+            <p>🏆 Score high and challenge yourself!</p>
+        `;
+    }
+
+    if(page==="contact"){
+        app.innerHTML=`
+            <h2>Contact</h2>
+            <p>📧 skillcraft@quiz.com</p>
+            <p>📞 +91 98765 43210</p>
+        `;
+    }
+}
+
+/* QUIZ LOGIC */
+function startQuiz(){
+    score=0;
+    index=0;
+    showQuestion();
+}
+
+function showQuestion(){
+    if(index>=quiz.length) return finish();
+
+    let q=quiz[index];
+    let html=`<h2>${q.q}</h2>`;
+
+    if(q.type==="single"){
+        q.options.forEach(o=>{
+            html+=`<div class="options">
+                <label><input type="radio" name="ans" value="${o}"> ${o}</label>
+            </div>`;
+        });
+    }
+
+    if(q.type==="multi"){
+        q.options.forEach(o=>{
+            html+=`<div class="options">
+                <label><input type="checkbox" value="${o}"> ${o}</label>
+            </div>`;
+        });
+    }
+
+    if(q.type==="fill"){
+        html+=`<input type="text" id="fill" placeholder="Enter answer">`;
+    }
+
+    html+=`<button onclick="submit()">Next</button>`;
+    app.innerHTML=html;
+}
+
+function submit(){
+    let q=quiz[index];
+    let correct=false;
+
+    if(q.type==="single"){
+        let s=document.querySelector('input[name="ans"]:checked');
+        if(s && s.value===q.ans) correct=true;
+    }
+
+    if(q.type==="multi"){
+        let s=[...document.querySelectorAll('input[type="checkbox"]:checked')].map(i=>i.value);
+        correct=JSON.stringify(s.sort())===JSON.stringify(q.ans.sort());
+    }
+
+    if(q.type==="fill"){
+        let v=document.getElementById("fill").value.trim();
+        if(v.toLowerCase()===q.ans.toLowerCase()) correct=true;
+    }
+
+    score+=correct?1:-1;
+    index++;
+    showQuestion();
+}
+
+function finish(){
+    app.innerHTML=`
+        <h2>Quiz Completed 🎉</h2>
+        <div class="score">Score: ${score}</div>
+        <p>Returning to Home...</p>
+    `;
+    setTimeout(()=>loadPage("home"),3000);
+}
+
+/* DEFAULT */
+loadPage("home");
+</script>
+
+</body>
+</html>
