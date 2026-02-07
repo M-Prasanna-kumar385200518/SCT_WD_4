@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SkillCraft Tic Tac Toe</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+/* DYNAMIC BACKGROUND */
+body{
+    min-height:100vh;
+    background:radial-gradient(circle at top left,#ff6ec4,#7873f5,#4facfe);
+    color:#fff;
+    overflow-x:hidden;
+}
+
+.bg-blur{
+    position:fixed;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:0.7;
+    animation:float 12s infinite alternate;
+}
+
+.bg1{ background:#ff6ec4; top:-120px; left:-120px;}
+.bg2{ background:#4facfe; bottom:-150px; right:-150px;}
+
+@keyframes float{
+    from{transform:translateY(0);}
+    to{transform:translateY(80px);}
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:16px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(16px);
+    z-index:1000;
+    box-shadow:0 10px 40px rgba(0,0,0,0.25);
+}
+
+nav h2{
+    font-weight:700;
+    letter-spacing:1px;
+    background:linear-gradient(90deg,#ffe259,#ffa751);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+nav a{
+    margin-left:22px;
+    color:#fff;
+    text-decoration:none;
+    font-weight:500;
+    cursor:pointer;
+    position:relative;
+}
+
+nav a::after{
+    content:"";
+    position:absolute;
+    width:0;
+    height:3px;
+    left:0;
+    bottom:-6px;
+    background:#ffe259;
+    transition:0.3s;
+}
+
+nav a:hover::after{
+    width:100%;
+}
+
+/* MAIN */
+main{
+    padding-top:130px;
+    display:flex;
+    justify-content:center;
+    position:relative;
+    z-index:2;
+}
+
+.container{
+    width:90%;
+    max-width:520px;
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(20px);
+    border-radius:28px;
+    padding:40px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.35);
+    animation:pop 0.6s ease;
+}
+
+@keyframes pop{
+    from{opacity:0; transform:scale(0.85);}
+    to{opacity:1; transform:scale(1);}
+}
+
+h1,h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+p{
+    text-align:center;
+    line-height:1.7;
+    opacity:0.95;
+}
+
+button{
+    display:block;
+    margin:18px auto;
+    padding:14px 42px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(45deg,#ffe259,#ffa751);
+    color:#333;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.35s;
+}
+
+button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 30px #ffe259;
+}
+
+/* GAME BOARD */
+.board{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-top:25px;
+}
+
+.cell{
+    aspect-ratio:1;
+    border-radius:22px;
+    background:rgba(255,255,255,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:46px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:inset 0 0 20px rgba(255,255,255,0.2);
+}
+
+.cell:hover{
+    background:rgba(255,255,255,0.45);
+    box-shadow:0 0 25px #fff;
+}
+
+.status{
+    text-align:center;
+    margin-top:22px;
+    font-size:20px;
+    font-weight:500;
+    color:#ffe259;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-blur bg1"></div>
+<div class="bg-blur bg2"></div>
+
+<nav>
+    <h2>SkillCraft TicTacToe</h2>
+    <div>
+        <a onclick="loadPage('home')">Home</a>
+        <a onclick="loadPage('about')">About</a>
+        <a onclick="loadPage('rules')">Rules</a>
+        <a onclick="loadPage('play')">Play</a>
+        <a onclick="loadPage('contact')">Contact</a>
+    </div>
+</nav>
+
+<main>
+    <div class="container" id="app"></div>
+</main>
+
+<script>
+const app = document.getElementById("app");
+let board,currentPlayer,gameActive,vsComputer=false;
+
+const winPatterns=[
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
+
+function loadPage(page){
+    if(page==="home"){
+        app.innerHTML=`
+        <h1>🎮 Tic Tac Toe</h1>
+        <p>A real-time, colorful & interactive game experience</p>
+        <button onclick="loadPage('play')">Start Game</button>`;
+    }
+    if(page==="about"){
+        app.innerHTML=`<h2>About</h2>
+        <p>This game demonstrates DOM manipulation, game logic,
+        UI design and interactive JavaScript.</p>`;
+    }
+    if(page==="rules"){
+        app.innerHTML=`<h2>Rules</h2>
+        <p>✔ Player X starts first</p>
+        <p>✔ Match 3 symbols in a row</p>
+        <p>✔ Horizontal, Vertical or Diagonal wins</p>`;
+    }
+    if(page==="contact"){
+        app.innerHTML=`<h2>Contact</h2>
+        <p>📧 skillcraft@games.com</p>
+        <p>📞 +91 98765 43210</p>`;
+    }
+    if(page==="play") chooseMode();
+}
+
+function chooseMode(){
+    app.innerHTML=`
+    <h2>Select Mode</h2>
+    <button onclick="startGame(false)">Player vs Player</button>
+    <button onclick="startGame(true)">Player vs Computer</button>`;
+}
+
+function startGame(comp){
+    vsComputer=comp;
+    board=Array(9).fill("");
+    currentPlayer="X";
+    gameActive=true;
+
+    let html=`<h2>Tic Tac Toe</h2><div class="board">`;
+    board.forEach((_,i)=>html+=`<div class="cell" onclick="move(${i})"></div>`);
+    html+=`</div><div class="status" id="status">Player X's Turn</div>`;
+    html+=`<button onclick="loadPage('home')">Exit</button>`;
+    app.innerHTML=html;
+}
+
+function move(i){
+    if(!gameActive||board[i])return;
+    board[i]=currentPlayer;
+    document.getElementsByClassName("cell")[i].innerText=currentPlayer;
+
+    if(checkWin()){
+        document.getElementById("status").innerText=`Player ${currentPlayer} Wins 🎉`;
+        gameActive=false;
+        return;
+    }
+    if(!board.includes("")){
+        document.getElementById("status").innerText="Draw 😐";
+        gameActive=false;
+        return;
+    }
+    currentPlayer=currentPlayer==="X"?"O":"X";
+    document.getElementById("status").innerText=`Player ${currentPlayer}'s Turn`;
+
+    if(vsComputer && currentPlayer==="O"){
+        setTimeout(()=>move(board.findIndex(v=>v==="")),600);
+    }
+}
+
+function checkWin(){
+    return winPatterns.some(p=>p.every(i=>board[i]===currentPlayer));
+}
+
+loadPage("home");
+</script>
+
+</body>
+</html>
