@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SkillCraft To-Do App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+/* BACKGROUND */
+body{
+    min-height:100vh;
+    background:radial-gradient(circle at top left,#43e97b,#38f9d7,#5f9cff);
+    color:#fff;
+}
+
+/* BLURS */
+.blur{
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    filter:blur(100px);
+    opacity:0.7;
+    z-index:-1;
+}
+.b1{background:#ff6ec4; top:-120px; left:-120px;}
+.b2{background:#5f9cff; bottom:-120px; right:-120px;}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:16px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(16px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.25);
+    z-index:10;
+}
+
+nav h2{
+    font-weight:700;
+    background:linear-gradient(90deg,#ffe259,#ffa751);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+nav a{
+    margin-left:22px;
+    color:#fff;
+    text-decoration:none;
+    font-weight:500;
+    cursor:pointer;
+    position:relative;
+}
+
+nav a::after{
+    content:"";
+    position:absolute;
+    width:0;
+    height:3px;
+    background:#ffe259;
+    left:0;
+    bottom:-6px;
+    transition:0.3s;
+}
+nav a:hover::after{width:100%;}
+
+/* MAIN */
+main{
+    padding-top:130px;
+    display:flex;
+    justify-content:center;
+}
+
+.container{
+    width:92%;
+    max-width:750px;
+    background:rgba(255,255,255,0.2);
+    backdrop-filter:blur(20px);
+    border-radius:30px;
+    padding:40px;
+    box-shadow:0 35px 90px rgba(0,0,0,0.35);
+    animation:pop 0.6s ease;
+}
+
+@keyframes pop{
+    from{opacity:0; transform:scale(0.9);}
+    to{opacity:1; transform:scale(1);}
+}
+
+h1,h2{text-align:center;margin-bottom:20px;}
+p{text-align:center;line-height:1.7;opacity:0.95;}
+
+button{
+    border:none;
+    border-radius:40px;
+    padding:12px 28px;
+    background:linear-gradient(45deg,#ffe259,#ffa751);
+    color:#333;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover{transform:scale(1.08);box-shadow:0 0 30px #ffe259;}
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    border-radius:14px;
+    border:none;
+    outline:none;
+    margin:8px 0;
+}
+
+/* TASK LIST */
+.task{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px;
+    margin:12px 0;
+    background:rgba(255,255,255,0.25);
+    border-radius:18px;
+}
+
+.task.done{
+    opacity:0.6;
+    text-decoration:line-through;
+}
+
+.task small{
+    display:block;
+    opacity:0.8;
+}
+
+.actions button{
+    margin-left:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="blur b1"></div>
+<div class="blur b2"></div>
+
+<nav>
+    <h2>SkillCraft To-Do</h2>
+    <div>
+        <a onclick="page('home')">Home</a>
+        <a onclick="page('tasks')">Tasks</a>
+        <a onclick="page('about')">About</a>
+        <a onclick="page('contact')">Contact</a>
+    </div>
+</nav>
+
+<main>
+    <div class="container" id="app"></div>
+</main>
+
+<script>
+const app=document.getElementById("app");
+let todos=JSON.parse(localStorage.getItem("todos"))||[];
+
+function save(){localStorage.setItem("todos",JSON.stringify(todos));}
+
+function page(p){
+    if(p==="home"){
+        app.innerHTML=`
+        <h1>📝 To-Do App</h1>
+        <p>Organize tasks, set deadlines and stay productive</p>
+        <div style="text-align:center;margin-top:20px;">
+            <button onclick="page('tasks')">Manage Tasks</button>
+        </div>`;
+    }
+
+    if(p==="about"){
+        app.innerHTML=`<h2>About</h2>
+        <p>This To-Do application helps manage daily tasks with
+        deadlines, editing and completion tracking.</p>`;
+    }
+
+    if(p==="contact"){
+        app.innerHTML=`<h2>Contact</h2>
+        <p>📧 skillcraft@todo.com</p>
+        <p>📞 +91 98765 43210</p>`;
+    }
+
+    if(p==="tasks") renderTasks();
+}
+
+function renderTasks(){
+    let html=`
+    <h2>Your Tasks</h2>
+    <input id="title" placeholder="Task title">
+    <textarea id="desc" placeholder="Task description"></textarea>
+    <input type="datetime-local" id="time">
+    <button onclick="addTask()">Add Task</button>
+    <hr style="margin:25px 0;border-color:rgba(255,255,255,0.3);">`;
+
+    todos.forEach((t,i)=>{
+        html+=`
+        <div class="task ${t.done?'done':''}">
+            <div>
+                <strong>${t.title}</strong>
+                <small>${t.desc}</small>
+                <small>⏰ ${t.time||'No date set'}</small>
+            </div>
+            <div class="actions">
+                <button onclick="toggle(${i})">✔</button>
+                <button onclick="edit(${i})">✏</button>
+                <button onclick="del(${i})">🗑</button>
+            </div>
+        </div>`;
+    });
+
+    app.innerHTML=html;
+}
+
+function addTask(){
+    let title=titleInput(), desc=descInput(), time=timeInput();
+    if(!title) return;
+    todos.push({title,desc,time,done:false});
+    save(); renderTasks();
+}
+
+function toggle(i){todos[i].done=!todos[i].done; save(); renderTasks();}
+function del(i){todos.splice(i,1); save(); renderTasks();}
+
+function edit(i){
+    document.getElementById("title").value=todos[i].title;
+    document.getElementById("desc").value=todos[i].desc;
+    document.getElementById("time").value=todos[i].time;
+    todos.splice(i,1);
+    save(); renderTasks();
+}
+
+function titleInput(){return document.getElementById("title").value.trim();}
+function descInput(){return document.getElementById("desc").value.trim();}
+function timeInput(){return document.getElementById("time").value;}
+
+page("home");
+</script>
+
+</body>
+</html>
